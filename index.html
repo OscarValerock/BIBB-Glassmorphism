@@ -233,17 +233,21 @@ function hexToRgb(hex) {
 }
 
 // Add the click event listener to the button
-copyButton.addEventListener('click', async () => {
+copyButton.addEventListener('click', () => {
     // Copy the text
-    await navigator.clipboard.writeText(code.textContent);
+    navigator.clipboard.writeText(code.textContent)
+    .then(() => {
+        // Change the button text
+        copyButton.textContent = 'Content copied to clipboard';
 
-    // Change the button text
-    copyButton.textContent = 'Content copied to clipboard';
-
-    // Change the button text back after one second
-    setTimeout(() => {
-        copyButton.textContent = 'Copy Code';
-    }, 1000);
+        // Change the button text back after one second
+        setTimeout(() => {
+            copyButton.textContent = 'Copy Code';
+        }, 1000);
+    })
+    .catch(err => {
+        console.error('Could not copy text: ', err);
+    });
 });
     </script>
 
