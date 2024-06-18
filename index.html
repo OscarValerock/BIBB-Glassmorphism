@@ -137,12 +137,12 @@
             </div>
         </div>
         <input class="box" type="text" id="bgUrl" placeholder="Enter background image URL">
-        <label class="label">Blur</label>
-        <input class="slider" type="range" min="0" max="50" value="10" id="sliderBlur">
-        <label class="label">Opacity</label>
-        <input class="slider" type="range" min="0" max="1" value="0.5" step="0.1" id="sliderOpacity">
+        <label class="label" id="blurLabel">Blur (10px)</label>
+        <input class="slider" type="range" min="0" max="100" value="10" id="sliderBlur">
+        <label class="label" id="opacityLabel">Opacity (50%)</label>
+        <input class="slider" type="range" min="0" max="1" value="0.5" step="0.01" id="sliderOpacity">
         <input type="color" id="colorInput" style="opacity: 0; position: absolute;">
-<button id="colorPicker">SelectColor</button>
+        <button id="colorPicker">SelectColor</button>
         <div id="code"></div>
         <button id="copyButton">Copy Code</button>
         <span id="copyMessage"></span>
@@ -183,21 +183,24 @@ const updateStyle = (blurValue, opacityValue, rgbColor) => {
         glass.style.backdropFilter = `blur(${blurValue}px)`;
         glass.style.backgroundColor = rgbColor ? `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${opacityValue})` : `rgba(255, 255, 255, ${opacityValue})`;
     });
-    code.textContent = `Glassmorphism =
-"<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            background: ${rgbColor ? `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${opacityValue})` : `rgba(255, 255, 255, ${opacityValue})`};
-            backdrop-filter: blur(${blurValue}px);
-            } 
-    </style>
-</head>
-<body>
-<` + `body>
-</html>"`;
+    code.textContent = 
+    `Glassmorphism = 
+    "<!DOCTYPE html>
+    <html>
+        <head>
+            <style>
+                body {
+                    background: ${rgbColor ? `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${opacityValue})` : `rgba(255, 255, 255, ${opacityValue})`};
+                    backdrop-filter: blur(${blurValue}px);
+                    } 
+            </style>
+        </head>
+        <body>
+        <` + `body>
+    </html>"`;
 }
+
+
 
 // Call the updateStyle function with initial values
 updateStyle(slider.value, sliderOpacity.value);
@@ -205,10 +208,21 @@ updateStyle(slider.value, sliderOpacity.value);
 let rgbColor = null; // Store the selected color
 
 // When the blur slider changes, update the blur, opacity and color
-slider.oninput = () => updateStyle(slider.value, sliderOpacity.value, rgbColor);
+slider.oninput = () => {
+    const blurValue = sliderBlur.value;
+    const blurText = `Blur (${blurValue} px)`;
+    blurLabel.textContent = blurText;
+    updateStyle(slider.value, sliderOpacity, rgbColor);
+    
+};
 
 // When the opacity slider changes, update the blur, opacity and color
-sliderOpacity.oninput = () => updateStyle(slider.value, sliderOpacity.value, rgbColor);
+sliderOpacity.oninput = () => {
+    const opacityValue = sliderOpacity.value;
+    const opacityText = `Opacity (${Math.round(opacityValue * 100)}%)`;
+    opacityLabel.textContent = opacityText;
+    updateStyle(slider.value, opacityValue, rgbColor);
+};
 
 // When the color input changes, update the color
 colorInput.addEventListener('input', function() {
